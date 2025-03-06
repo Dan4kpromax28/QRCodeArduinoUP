@@ -1,6 +1,9 @@
 #include <HardwareSerial.h>
 #include <WiFi.h>
 #include "config.h"
+#include "Relay.h"
+
+Relay relay;
 
 #define QR_RX 16
 #define QR_TX 17
@@ -22,11 +25,11 @@ void setup() {
 
 void loop() {
   if (mySerial.available()) {  
-    while (mySerial.available()) {  
-      char input = mySerial.read();  
-      Serial.print(input);  
-      delay(5);
+    String qrCode = mySerial.readStringUntil('\n'); 
+    qrCode.trim();
+    Serial.println("QR Code: " + qrCode);
+    if (qrCode == "123456"){
+      relay.onOff();
     }
-    Serial.println();
   }
 }
