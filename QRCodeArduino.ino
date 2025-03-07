@@ -30,9 +30,11 @@ void loop() {
     String qrCode = mySerial.readStringUntil('\n'); 
     qrCode.trim();
     Serial.println("QR Code: " + qrCode);
-    if (qrCode == "123456"){
-      Serial.print(data->checkCodeInDatabase(qrCode));
+    if (data->checkCodeInDatabase(qrCode)){
       relay.onOff();
+    }
+    else {
+      Serial.print("Notika kluda");
     }
   }
 }
