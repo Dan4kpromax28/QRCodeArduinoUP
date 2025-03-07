@@ -3,12 +3,16 @@
 #include "config.h"
 #include "Relay.h"
 #include "SupabaseC.h"
+#include "OledD.h"
 
 Relay relay;
+
+
 #define QR_RX 16
 #define QR_TX 17
 HardwareSerial mySerial(1); 
 SupabaseC* data;
+OledD* dis;
 
 void setup() {
   Serial.begin(9600);  
@@ -22,6 +26,7 @@ void setup() {
   data = new SupabaseC();
   Serial.print("\nVeiksmigais pieslegums");
   mySerial.begin(9600, SERIAL_8N1, QR_RX, QR_TX);
+  dis = new OledD();
 
 }
 
@@ -32,6 +37,7 @@ void loop() {
     Serial.println("QR Code: " + qrCode);
     if (data->checkCodeInDatabase(qrCode)){
       relay.onOff();
+      dis->printText("Hello");
     }
     else {
       Serial.print("Notika kluda");
