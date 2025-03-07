@@ -11,6 +11,7 @@ Relay relay;
 #define QR_RX 16
 #define QR_TX 17
 HardwareSerial mySerial(1); 
+
 SupabaseC* data;
 OledD* dis;
 
