@@ -34,13 +34,13 @@ void loop() {
   if (mySerial.available()) {  
     String qrCode = mySerial.readStringUntil('\n'); 
     qrCode.trim();
-    Serial.println("QR Code: " + qrCode);
+    Serial.print("\nQR Code: " + qrCode);
     if (data->checkCodeInDatabase(qrCode)){
       relay.onOff();
-      dis->printText("Hello");
+      dis->scrollText("Veiksmiga autorizacija");
     }
     else {
-      Serial.print("Notika kluda");
+      dis->scrollText("Notika kluda");
     }
   }
 }

@@ -15,14 +15,15 @@ class OledD {
     Adafruit_SSD1306 display; 
 
   public:
-    OledD() : display(128, 64, &Wire, -1) { 
+    OledD() : display(WIDTH, HEIGHT, &Wire, RESET) { 
       
       if(!display.begin(SSD1306_SWITCHCAPVCC,0x3C)){
         for(;;);
       } 
       display.clearDisplay();
       display.setTextSize(2);
-      display.setCursor(0,10);
+      display.setCursor(0,32);
+      display.setTextWrap(false);
       display.setTextColor(WHITE);
     }
 
@@ -31,6 +32,23 @@ class OledD {
       display.display();
       delay(1000);
       display.clearDisplay();
+    }
+
+    void scrollText(String text){
+      int x = WIDTH;
+      int texLen = text.length() * 10;
+      int texEnd = -texLen;
+      while(x > texEnd){
+        display.clearDisplay();            
+        display.setCursor(x, 32);          
+        display.print(text);               
+        display.display();                 
+        delay(1);
+        x--;
+        x--;
+      }
+      display.clearDisplay();
+      display.display();
     }
 };
 
