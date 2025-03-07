@@ -11,7 +11,6 @@ class SupabaseC {
     Supabase db;
   public:
     SupabaseC() {  
-      
       db.begin(SUPABASE_URL, SUPABASE_KEY);
       Serial.println("Ir savienojums ar datubazei");  
     }
@@ -19,8 +18,8 @@ class SupabaseC {
     String checkCodeInDatabase(String code) {
       db.begin(SUPABASE_URL, SUPABASE_KEY);
       String result = db.from("ticket").select("*").eq("user_string", code).doSelect();
+      db.urlQuery_reset();
       return result;
-      
     }
 };
 
