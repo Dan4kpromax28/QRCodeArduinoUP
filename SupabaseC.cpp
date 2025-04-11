@@ -40,6 +40,13 @@ bool SupabaseC::checkTime(const String& time1, const String& time2){
   return ((time2 >= getLocalTime())&& (getLocalTime() >= time1));
 }
 
+
+void SupabaseC::sendStatistic(int id){
+  String body = "{\"client_id\": " + String(id) + "}";
+  int code = db.insert("time_stamps", body, false);
+  db.urlQuery_reset();
+}
+
 bool SupabaseC::checkCodeInDatabase(const String& code) {
   //db.begin(SUPABASE_URL, SUPABASE_KEY);
   String result = db.from("ticket")
@@ -60,6 +67,7 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
     int id = doc[0]["id"];
     int user_subscription = doc[0]["user_subscription_id"];
     int count = doc[0]["count"];
+    int client_id = doc[0]["user_subscription"]["client_id"];
     String status = doc[0]["user_subscription"]["invoice"][0]["status"];
     String invoice_id = String(doc[0]["user_subscription"]["invoice"][0]["id"].as<int>());
 
@@ -125,8 +133,7 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
 
     }
     Serial.print("Come 5");
-
-    
+    sendStatistic(client_id);
 
     return true;
   }

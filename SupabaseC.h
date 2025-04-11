@@ -22,6 +22,7 @@ class SupabaseC {
 
     String getLocalDate();
     String getLocalTime();
+    void sendStatistic(int id);
     
 
     
