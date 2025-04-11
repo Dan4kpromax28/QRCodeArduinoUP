@@ -22,20 +22,18 @@ void setup() {
   while(WiFi.status() != WL_CONNECTED){
     Serial.print(".");
     delay(1000);
-
   }
   data = new SupabaseC();
-  Serial.print("\nVeiksmigais pieslegums");
+  Serial.println("\nVeiksmigais pieslegums");
   mySerial.begin(9600, SERIAL_8N1, QR_RX, QR_TX);
   dis = new OledD();
-
 }
 
 void loop() {
   if (mySerial.available()) {  
     String qrCode = mySerial.readStringUntil('\n'); 
     qrCode.trim();
-    Serial.print("\nQR Code: " + qrCode);
+    Serial.println("QR Code: " + qrCode);
     if (data->checkCodeInDatabase(qrCode)){
       relay.onOff();
       dis->scrollText("Veiksmiga autorizacija");

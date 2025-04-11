@@ -1,7 +1,6 @@
 #ifndef SUPABASEC_H
 #define SUPABASEC_H
 
-#include "SupabaseC.h"
 #include <Arduino.h>
 #include <ESPSupabase.h>
 #include "config.h"
@@ -21,17 +20,25 @@ class SupabaseC {
     String start_at;
 
 
-    time_t getLocalDate();
+    String getLocalDate();
+    String getLocalTime();
+    
 
-    time_t convertToTimestamp(const String& dateStr);
+    
 
     bool checkDate(const String& dt1,const String& dt2);
+    bool checkDate(const String& dt1);
+    bool checkTime(const String& time1, const String& time2);
+
+    friend bool operator<=(const String& date1, const String& date);
+    friend bool operator>=(const String& time1, const String& time);
     
 
   public:
     SupabaseC();
 
     bool checkCodeInDatabase(const String& code);
+    friend int getTotalSeconds(int hour, int minutes, int seconds);
    
 };
 #endif

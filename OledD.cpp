@@ -8,7 +8,7 @@ OledD::OledD() : display(WIDTH, HEIGHT, &Wire, RESET) {
   } 
   display.clearDisplay();
   display.setTextSize(2);
-  display.setCursor(0,32);
+  display.setCursor(0,28);
   display.setTextWrap(false);
   display.setTextColor(WHITE);
 
@@ -27,7 +27,7 @@ void OledD::scrollText(const String& text){
   int texEnd = -texLen;
   while(x > texEnd){
     display.clearDisplay();            
-    display.setCursor(x, 32);          
+    display.setCursor(x, 28);          
     display.print(text);               
     display.display();                 
     delay(1);
