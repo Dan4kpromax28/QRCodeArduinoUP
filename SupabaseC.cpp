@@ -3,24 +3,27 @@
 SupabaseC::SupabaseC() : timeClient(ntpUDP) {  
   db.begin(SUPABASE_URL, SUPABASE_KEY);
   db.login_email(USER_LOGIN, USER_PASSWORD);
-  timeClient.begin();
-  timeClient.setTimeOffset(10800); // Latvija GMT +2
+  configTzTime("EET-2EEST,M3.5.0/3,M10.5.0/4", "pool.ntp.org");
   Serial.println("Ir savienojums ar datubazei");  
 }
 
 String SupabaseC::getLocalDate() {
-  timeClient.update();
-  time_t now = timeClient.getEpochTime(); 
+  struct tm timeinfo;
+   if (!::getLocalTime(&timeinfo)) {
+    return "1970-01-01"; 
+  }
   char timeStr[11];
-  strftime(timeStr, sizeof(timeStr), "%Y-%m-%d", localtime(&now));
+  strftime(timeStr, sizeof(timeStr), "%Y-%m-%d", &timeinfo);
   return String(timeStr);
 }
 
 String SupabaseC::getLocalTime(){
-  timeClient.update();
-  time_t now = timeClient.getEpochTime(); 
+  struct tm timeinfo;
+  if (!::getLocalTime(&timeinfo)) {
+    return "00:00:00"; 
+  }
   char timeStr[9];
-  strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
+  strftime(timeStr, sizeof(timeStr), "%H:%M:%S", &timeinfo);
   return String(timeStr);
 }
 
