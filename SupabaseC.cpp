@@ -42,15 +42,14 @@ bool SupabaseC::checkTime(const String& time1, const String& time2){
 
 
 void SupabaseC::sendStatistic(int id){
-  String body = "{\"client_id\": " + String(id) + "}";
+  String body = "{\"ticket_id\": " + String(id) + "}";
   int code = db.insert("time_stamps", body, false);
   db.urlQuery_reset();
 }
 
 bool SupabaseC::checkCodeInDatabase(const String& code) {
-  //db.begin(SUPABASE_URL, SUPABASE_KEY);
   String result = db.from("ticket")
-    .select("*,user_subscription(client_id,start_date,end_date,start_time,end_time,invoice(status,id),subscriptions(restriction_start,restriction_end,is_date,is_time))")
+    .select("*,user_subscription(start_date,end_date,start_time,end_time,invoice(status,id),subscriptions(restriction_start,restriction_end,is_date,is_time))")
     .eq("user_string", code)
     .doSelect();
   db.urlQuery_reset();
@@ -67,9 +66,8 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
     int id = doc[0]["id"];
     int user_subscription = doc[0]["user_subscription_id"];
     int count = doc[0]["count"];
-    int client_id = doc[0]["user_subscription"]["client_id"];
     String status = doc[0]["user_subscription"]["invoice"][0]["status"];
-    String invoice_id = String(doc[0]["user_subscription"]["invoice"][0]["id"].as<int>());
+    int invoice_id = doc[0]["user_subscription"]["invoice"][0]["id"];
 
     String start_rest = doc[0]["user_subscription"]["subscriptions"]["restriction_start"];
     String end_rest = doc[0]["user_subscription"]["subscriptions"]["restriction_end"];
@@ -77,8 +75,6 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
     bool isDate = doc[0]["user_subscription"]["subscriptions"]["is_date"];
     bool isTime = doc[0]["user_subscription"]["subscriptions"]["is_time"];
 
-    Serial.print(isDate);
-    Serial.print(isTime);
     
 
 
@@ -86,19 +82,15 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
       Serial.println("NAv derigs status" + status);
       return false;
     }
-    Serial.print("Come 1");
     if (!checkTime(start_rest, end_rest)) return false;
-    Serial.print("Come 2");
     if (isDate && isTime ){
       String startDate = doc[0]["user_subscription"]["start_date"];
       String startTime = doc[0]["user_subscription"]["start_time"];
       String endTime = doc[0]["user_subscription"]["end_time"];
       if(!checkDate(startDate)){
-        Serial.println("Notika kluda ar dati");
         return false;
       }
       if(!checkTime(startTime, endTime)){
-        Serial.println("Notika kluda ar laiku");
         return false;
       }
     }
@@ -111,29 +103,11 @@ bool SupabaseC::checkCodeInDatabase(const String& code) {
       Serial.println(checkDate(start_date, end_date));
       if(!checkDate(start_date, end_date)){
         
-        Serial.println("Notika kluda ar datumu 2");
         return false;
 
       }
     }
-    Serial.print("Come 4");
-    Serial.print(isTime);
-    Serial.print(isDate);
-    if (!isTime && !isDate){
-      Serial.println(count);
-      if (count <= 0){
-        Serial.println("Datums nav derigs");
-        return false;
-      }
-      int new_count = count - 1;
-      String body = "{\"status\": " + String(new_count) + "}";
-      int code = db.update("invoice").eq("id",invoice_id ).doUpdate(body);
-      Serial.println("TAs ir kods" + code);
-      db.urlQuery_reset();
-
-    }
-    Serial.print("Come 5");
-    sendStatistic(client_id);
+    sendStatistic(id);
 
     return true;
   }
@@ -150,17 +124,11 @@ int getTotalSeconds(int hour, int minutes, int seconds){
 
 bool operator<=(const String& date1, const String& date){
     int year = date.substring(0,4).toInt();
-    Serial.println(year);
     int year1 = date1.substring(0,4).toInt();
-    Serial.println(year1);
     int month = date.substring(5,7).toInt();
-    Serial.println(month);
     int month1 = date1.substring(5,7).toInt();
-    Serial.println(month1);
     int day = date.substring(8,10).toInt();
-    Serial.println(day);
     int day1 = date1.substring(8,10).toInt();
-    Serial.println(day1);
     if (year1 < year) return true;
     if (year1 == year && month1 < month) return true;
     if (year1 == year && month1 == month && day1 <= day) return true;
